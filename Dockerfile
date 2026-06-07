@@ -1,38 +1,45 @@
-FROM maven:3-eclipse-temurin-21 AS build
+FROM maven:3-eclipse-temurin-21-alpine AS build
 
-WORKDIR /opt/terrasense
+WORKDIR /opt/app
 
-COPY src ./src
 COPY pom.xml ./
+COPY src ./src
 
 RUN --mount=type=cache,target=/root/.m2 mvn package -DskipTests
-RUN jar xf target/chupinvet-0.0.1-SNAPSHOT.jar
-RUN jdeps --ignore-missing-deps -q \
-    --recursive \
-    --multi-release 21 \
-    --print-module-deps \
-    --class-path 'BOOT-INF/lib/*' \
-    target/chupinvet-0.0.1-SNAPSHOT.jar > deps.info
 
-RUN jlink \
-    --verbose \
-    --add-modules $(cat deps.info) \
-    --strip-debug \
-    --compress 2 \
-    --no-header-files \
-    --no-man-pages \
-    --output /customjre
+RUN jar xf target/*.jar && \
+    jdeps --ignore-missing-deps -q \
+      --recursive \
+      --multi-release 21 \
+      --print-module-deps \
+      --class-path 'BOOT-INF/lib/*' \
+      target/*.jar > deps.info && \
+    jlink \
+      --add-modules "$(cat deps.info)" \
+      --strip-debug \
+      --compress 2 \
+      --no-header-files \
+      --no-man-pages \
+      --output /customjre
 
-FROM gcr.io/distroless/base-debian12:nonroot
+FROM alpine:3.21
+
+RUN addgroup -S terrasensegroup && adduser -S terrasenseuser -G terrasensegroup
+
+COPY --from=build /customjre /opt/jre-minimal
 
 WORKDIR /app
 
-COPY --from=build /customjre /opt/jre
-COPY --from=build /opt/app/target/chupinvet-0.0.1-SNAPSHOT.jar app.jar
+ENV JAVA_HOME=/opt/jre-minimal \
+    PATH="/opt/jre-minimal/bin:$PATH"
 
-ENV JAVA_HOME=/opt/jre
-ENV PATH="/opt/jre/bin:${PATH}"
+COPY --from=build \
+     --chown=terrasenseuser:terrasensegroup \
+     /opt/app/target/*.jar \
+     api.jar
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+USER terrasenseuser
+
+ENTRYPOINT ["java", "-jar", "api.jar"]
