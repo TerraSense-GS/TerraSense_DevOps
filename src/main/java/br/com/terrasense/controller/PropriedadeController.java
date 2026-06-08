@@ -2,8 +2,11 @@ package br.com.terrasense.controller;
 
 import br.com.terrasense.dto.propriedade.PropriedadeRequestDTO;
 import br.com.terrasense.dto.propriedade.PropriedadeResponseDTO;
+import br.com.terrasense.exception.ErrorResponse;
 import br.com.terrasense.service.PropriedadeService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,7 +21,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/propriedades")
@@ -35,8 +39,18 @@ public class PropriedadeController {
     @Operation(summary = "Cadastrar propriedade", description = "Cadastra uma nova propriedade rural")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Propriedade cadastrada com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-            @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
+            @ApiResponse(responseCode = "400", description = "Dados inválidos",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(responseCode = "404", description = "Usuário não encontrado",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
     })
     public ResponseEntity<EntityModel<PropriedadeResponseDTO>> cadastrar(
             @RequestBody @Valid PropriedadeRequestDTO dto
@@ -68,7 +82,12 @@ public class PropriedadeController {
     @Operation(summary = "Buscar propriedade por ID", description = "Retorna uma propriedade pelo ID informado")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Propriedade encontrada com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Propriedade não encontrada")
+            @ApiResponse(responseCode = "404", description = "Propriedade não encontrada",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
     })
     public ResponseEntity<EntityModel<PropriedadeResponseDTO>> buscarPorId(
             @PathVariable Long id
@@ -116,8 +135,18 @@ public class PropriedadeController {
     @Operation(summary = "Atualizar propriedade", description = "Atualiza os dados de uma propriedade existente")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Propriedade atualizada com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-            @ApiResponse(responseCode = "404", description = "Propriedade ou usuário não encontrado")
+            @ApiResponse(responseCode = "400", description = "Dados inválidos",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(responseCode = "404", description = "Propriedade ou usuário não encontrado",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
     })
     public ResponseEntity<EntityModel<PropriedadeResponseDTO>> atualizar(
             @PathVariable Long id,
@@ -132,7 +161,12 @@ public class PropriedadeController {
     @Operation(summary = "Deletar propriedade", description = "Remove uma propriedade pelo ID informado")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Propriedade deletada com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Propriedade não encontrada")
+            @ApiResponse(responseCode = "404", description = "Propriedade não encontrada",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
     })
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         propriedadeService.deletar(id);

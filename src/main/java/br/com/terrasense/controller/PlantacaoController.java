@@ -2,8 +2,11 @@ package br.com.terrasense.controller;
 
 import br.com.terrasense.dto.plantacao.PlantacaoRequestDTO;
 import br.com.terrasense.dto.plantacao.PlantacaoResponseDTO;
+import br.com.terrasense.exception.ErrorResponse;
 import br.com.terrasense.service.PlantacaoService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,7 +21,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/plantacoes")
@@ -35,8 +39,18 @@ public class PlantacaoController {
     @Operation(summary = "Cadastrar plantação", description = "Cadastra uma nova plantação")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Plantação cadastrada com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-            @ApiResponse(responseCode = "404", description = "Propriedade não encontrada")
+            @ApiResponse(responseCode = "400", description = "Dados inválidos",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(responseCode = "404", description = "Propriedade não encontrada",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
     })
     public ResponseEntity<EntityModel<PlantacaoResponseDTO>> cadastrar(
             @RequestBody @Valid PlantacaoRequestDTO dto
@@ -67,7 +81,12 @@ public class PlantacaoController {
     @Operation(summary = "Buscar plantação por ID", description = "Retorna uma plantação pelo ID informado")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Plantação encontrada com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Plantação não encontrada")
+            @ApiResponse(responseCode = "404", description = "Plantação não encontrada",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
     })
     public ResponseEntity<EntityModel<PlantacaoResponseDTO>> buscarPorId(
             @PathVariable Long id
@@ -132,8 +151,18 @@ public class PlantacaoController {
     @Operation(summary = "Atualizar plantação", description = "Atualiza os dados de uma plantação existente")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Plantação atualizada com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-            @ApiResponse(responseCode = "404", description = "Plantação ou propriedade não encontrada")
+            @ApiResponse(responseCode = "400", description = "Dados inválidos",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(responseCode = "404", description = "Plantação ou propriedade não encontrada",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
     })
     public ResponseEntity<EntityModel<PlantacaoResponseDTO>> atualizar(
             @PathVariable Long id,
@@ -148,7 +177,12 @@ public class PlantacaoController {
     @Operation(summary = "Deletar plantação", description = "Remove uma plantação pelo ID informado")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Plantação deletada com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Plantação não encontrada")
+            @ApiResponse(responseCode = "404", description = "Plantação não encontrada",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
     })
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         plantacaoService.deletar(id);

@@ -2,8 +2,11 @@ package br.com.terrasense.controller;
 
 import br.com.terrasense.dto.dadosnasa.DadosNasaRequestDTO;
 import br.com.terrasense.dto.dadosnasa.DadosNasaResponseDTO;
+import br.com.terrasense.exception.ErrorResponse;
 import br.com.terrasense.service.DadosNasaService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,7 +21,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/dados-nasa")
@@ -35,8 +39,18 @@ public class DadosNasaController {
     @Operation(summary = "Cadastrar dados NASA", description = "Cadastra um novo registro de dados NASA")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Dados NASA cadastrados com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-            @ApiResponse(responseCode = "404", description = "Plantação não encontrada")
+            @ApiResponse(responseCode = "400", description = "Dados inválidos",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(responseCode = "404", description = "Plantação não encontrada",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
     })
     public ResponseEntity<EntityModel<DadosNasaResponseDTO>> cadastrar(
             @RequestBody @Valid DadosNasaRequestDTO dto
@@ -67,7 +81,12 @@ public class DadosNasaController {
     @Operation(summary = "Buscar dados NASA por ID", description = "Retorna um registro de dados NASA pelo ID informado")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Dados NASA encontrados com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Dados NASA não encontrados")
+            @ApiResponse(responseCode = "404", description = "Dados NASA não encontrados",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
     })
     public ResponseEntity<EntityModel<DadosNasaResponseDTO>> buscarPorId(
             @PathVariable Long id
@@ -98,8 +117,18 @@ public class DadosNasaController {
     @Operation(summary = "Atualizar dados NASA", description = "Atualiza os dados de um registro NASA existente")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Dados NASA atualizados com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-            @ApiResponse(responseCode = "404", description = "Dados NASA ou plantação não encontrados")
+            @ApiResponse(responseCode = "400", description = "Dados inválidos",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(responseCode = "404", description = "Dados NASA ou plantação não encontrados",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
     })
     public ResponseEntity<EntityModel<DadosNasaResponseDTO>> atualizar(
             @PathVariable Long id,
@@ -114,7 +143,12 @@ public class DadosNasaController {
     @Operation(summary = "Deletar dados NASA", description = "Remove um registro NASA pelo ID informado")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Dados NASA deletados com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Dados NASA não encontrados")
+            @ApiResponse(responseCode = "404", description = "Dados NASA não encontrados",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
     })
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         dadosNasaService.deletar(id);

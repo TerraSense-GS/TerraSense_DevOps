@@ -2,8 +2,11 @@ package br.com.terrasense.controller;
 
 import br.com.terrasense.dto.alerta.AlertaRequestDTO;
 import br.com.terrasense.dto.alerta.AlertaResponseDTO;
+import br.com.terrasense.exception.ErrorResponse;
 import br.com.terrasense.service.AlertaService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,7 +21,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/alertas")
@@ -35,8 +39,18 @@ public class AlertaController {
     @Operation(summary = "Cadastrar alerta", description = "Cadastra um novo alerta climático")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Alerta cadastrado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-            @ApiResponse(responseCode = "404", description = "Plantação não encontrada")
+            @ApiResponse(responseCode = "400", description = "Dados inválidos",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(responseCode = "404", description = "Plantação não encontrada",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
     })
     public ResponseEntity<EntityModel<AlertaResponseDTO>> cadastrar(
             @RequestBody @Valid AlertaRequestDTO dto
@@ -67,7 +81,12 @@ public class AlertaController {
     @Operation(summary = "Buscar alerta por ID", description = "Retorna um alerta pelo ID informado")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Alerta encontrado com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Alerta não encontrado")
+            @ApiResponse(responseCode = "404", description = "Alerta não encontrado",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
     })
     public ResponseEntity<EntityModel<AlertaResponseDTO>> buscarPorId(
             @PathVariable Long id
@@ -132,8 +151,18 @@ public class AlertaController {
     @Operation(summary = "Atualizar alerta", description = "Atualiza os dados de um alerta existente")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Alerta atualizado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-            @ApiResponse(responseCode = "404", description = "Alerta ou plantação não encontrado")
+            @ApiResponse(responseCode = "400", description = "Dados inválidos",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(responseCode = "404", description = "Alerta ou plantação não encontrado",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
     })
     public ResponseEntity<EntityModel<AlertaResponseDTO>> atualizar(
             @PathVariable Long id,
@@ -148,7 +177,12 @@ public class AlertaController {
     @Operation(summary = "Deletar alerta", description = "Remove um alerta pelo ID informado")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Alerta deletado com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Alerta não encontrado")
+            @ApiResponse(responseCode = "404", description = "Alerta não encontrado",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
     })
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         alertaService.deletar(id);

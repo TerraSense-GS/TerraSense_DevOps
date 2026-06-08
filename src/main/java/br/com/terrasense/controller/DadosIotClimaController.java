@@ -2,8 +2,11 @@ package br.com.terrasense.controller;
 
 import br.com.terrasense.dto.dadosiotclima.DadosIotClimaRequestDTO;
 import br.com.terrasense.dto.dadosiotclima.DadosIotClimaResponseDTO;
+import br.com.terrasense.exception.ErrorResponse;
 import br.com.terrasense.service.DadosIotClimaService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,7 +21,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/dados-iot-clima")
@@ -35,8 +39,18 @@ public class DadosIotClimaController {
     @Operation(summary = "Cadastrar dados IoT", description = "Cadastra um novo registro climático de sensores IoT")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Dados IoT cadastrados com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-            @ApiResponse(responseCode = "404", description = "Plantação não encontrada")
+            @ApiResponse(responseCode = "400", description = "Dados inválidos",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(responseCode = "404", description = "Plantação não encontrada",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
     })
     public ResponseEntity<EntityModel<DadosIotClimaResponseDTO>> cadastrar(
             @RequestBody @Valid DadosIotClimaRequestDTO dto
@@ -67,7 +81,12 @@ public class DadosIotClimaController {
     @Operation(summary = "Buscar dados IoT por ID", description = "Retorna um registro IoT pelo ID informado")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Dados IoT encontrados com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Dados IoT não encontrados")
+            @ApiResponse(responseCode = "404", description = "Dados IoT não encontrados",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
     })
     public ResponseEntity<EntityModel<DadosIotClimaResponseDTO>> buscarPorId(
             @PathVariable Long id
@@ -98,8 +117,18 @@ public class DadosIotClimaController {
     @Operation(summary = "Atualizar dados IoT", description = "Atualiza os dados de um registro IoT existente")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Dados IoT atualizados com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-            @ApiResponse(responseCode = "404", description = "Dados IoT ou plantação não encontrados")
+            @ApiResponse(responseCode = "400", description = "Dados inválidos",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            ),
+            @ApiResponse(responseCode = "404", description = "Dados IoT ou plantação não encontrados",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
     })
     public ResponseEntity<EntityModel<DadosIotClimaResponseDTO>> atualizar(
             @PathVariable Long id,
@@ -114,7 +143,12 @@ public class DadosIotClimaController {
     @Operation(summary = "Deletar dados IoT", description = "Remove um registro IoT pelo ID informado")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Dados IoT deletados com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Dados IoT não encontrados")
+            @ApiResponse(responseCode = "404", description = "Dados IoT não encontrados",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class)
+                    )
+            )
     })
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         dadosIotClimaService.deletar(id);
