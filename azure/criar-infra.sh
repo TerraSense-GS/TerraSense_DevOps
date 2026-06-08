@@ -4,18 +4,19 @@ set -euo pipefail
 
 trap 'echo "Erro na linha $LINENO ao executar: $BASH_COMMAND" >&2' ERR
 
-echo "Iniciando provisionamento ChupinVet..."
+echo "Iniciando provisionamento TerraSense..."
 
-RG="rg-chupinvet-devops"
+RG="rg-terrasense-devops"
 LOCATION="canadacentral"
-VM_NAME="vm-chupinvet-app"
+VM_NAME="vm-terrasense-app"
 ADMIN_USER="azureuser"
 IMAGE="Ubuntu2204"
 SIZE="Standard_B2s_v2"
 APP_PORT=8080
 DB_PORT=1521
-REPO_URL="https://github.com/ChupinVet/DevOpsChallenge.git"
-REPO_DIR="DevOpsChallenge"
+
+REPO_URL="https://github.com/TerraSense-GS/TerraSense_DevOps.git"
+REPO_DIR="TerraSense_DevOps"
 
 echo "Criando Resource Group..."
 az group create \
@@ -38,6 +39,15 @@ az vm open-port \
   --resource-group "$RG" \
   --name "$VM_NAME" \
   --port "$APP_PORT" \
+  --priority 1001
+  >/dev/null
+
+echo "Abrindo porta do Oracle $DB_PORT..."
+az vm open-port \
+  --resource-group "$RG" \
+  --name "$VM_NAME" \
+  --port "$DB_PORT" \
+  --priority 1002 \
   >/dev/null
 
 echo "Obtendo IP público..."
@@ -90,7 +100,7 @@ ssh -o StrictHostKeyChecking=no "$ADMIN_USER@$PUBLIC_IP" "
 
 echo "Aguardando aplicação responder..."
 for i in {1..60}; do
-  if curl -fsS "http://$PUBLIC_IP:$APP_PORT/responsaveis" >/dev/null 2>&1; then
+  if curl -fsS "http://$PUBLIC_IP:$APP_PORT/usuarios" >/dev/null 2>&1; then
     echo "Aplicação respondeu com sucesso."
     break
   fi
@@ -98,9 +108,14 @@ for i in {1..60}; do
   sleep 10
 done
 
-if ! curl -fsS "http://$PUBLIC_IP:$APP_PORT/responsaveis" >/dev/null 2>&1; then
-  echo "A aplicação não respondeu em http://$PUBLIC_IP:$APP_PORT/responsaveis"
-  echo "Acesse a VM e verifique: sudo docker ps -a && sudo docker logs chupinvet-api"
+if ! curl -fsS "http://$PUBLIC_IP:$APP_PORT/usuarios" >/dev/null 2>&1; then
+  echo "A aplicação não respondeu em http://$PUBLIC_IP:$APP_PORT/usuarios"
+    echo "Acesse a VM e verifique:"
+    echo "ssh $ADMIN_USER@$PUBLIC_IP"
+    echo "cd $REPO_DIR"
+    echo "sudo docker ps -a"
+    echo "sudo docker logs api-rm566052"
+    echo "sudo docker logs oracle-rm566052"
   exit 1
 fi
 
@@ -108,3 +123,10 @@ fi
 echo "Finalizado com sucesso!"
 echo "API: http://$PUBLIC_IP:$APP_PORT"
 echo "Swagger: http://$PUBLIC_IP:$APP_PORT/swagger-ui.html"
+echo ""
+echo "Comandos úteis:"
+echo "ssh $ADMIN_USER@$PUBLIC_IP"
+echo "cd $REPO_DIR"
+echo "sudo docker ps"
+echo "sudo docker logs api-rm566052"
+echo "sudo docker logs oracle-rm566052"

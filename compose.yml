@@ -15,7 +15,7 @@ services:
 
 
   app:
-    image: docker.io/vitordalmagro/terrasense-api:jlink-v1
+    image: docker.io/vitordalmagro/terrasense-api:jlink-v3
     container_name: api-rm566052
     depends_on:
       - oracle
