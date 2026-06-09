@@ -1,19 +1,13 @@
-# TerraSense API
+# TerraSense
 
-A API TerraSense atua como camada de comunicação entre a plataforma de monitoramento agrícola inteligente e o banco de dados Oracle, permitindo o gerenciamento centralizado das informações relacionadas a usuários, propriedades rurais, plantações, dados climáticos coletados por sensores IoT, dados de satélite da NASA e alertas agrícolas.
+O TerraSense é uma plataforma de monitoramento agrícola inteligente desenvolvida para auxiliar produtores rurais na gestão de propriedades, plantações e condições ambientais.
 
-Por meio da API, é possível cadastrar, consultar, atualizar e remover informações do sistema, permitindo que aplicações web, mobile ou outros serviços consumam os dados de forma padronizada.
+A solução centraliza informações provenientes de sensores IoT, dados climáticos e dados de satélite da NASA, permitindo o acompanhamento das condições das plantações e a geração de alertas agrícolas para apoio à tomada de decisão.
 
-A utilização da API centraliza as regras de negócio da solução, garante a integridade dos dados, facilita a manutenção do sistema e possibilita a integração entre diferentes componentes da plataforma TerraSense.
+A API TerraSense atua como camada central da solução, disponibilizando operações de cadastro, consulta, atualização e remoção de dados relacionados aos usuários, propriedades rurais, plantações, dados climáticos e alertas agrícolas.
 
----
+Para a disciplina DevOps Tools & Cloud Computing, a solução foi conteinerizada utilizando Docker, Docker Compose e Oracle Database, com deploy em uma VM na Microsoft Azure através de automação com Azure CLI.
 
-# Links do Projeto
-
-* **Deploy:** https://terrasense-csjw.onrender.com
-* **Swagger:** https://terrasense-csjw.onrender.com/swagger-ui.html
-* **Vídeo de Apresentação:** placeholder
-* **Repositório GitHub:** placeholder
 
 ---
 
@@ -29,254 +23,112 @@ A utilização da API centraliza as regras de negócio da solução, garante a i
 
 ---
 
-# Tecnologias Utilizadas
+# Arquitetura da Solução
 
-* Java 21
-* Spring Boot 4.0.6
-* Spring Data JPA
-* Hibernate
-* Oracle Database
-* Maven
-* Swagger
-* Spring HATEOAS
-* Lombok
-* Bean Validation
-* Render
+![Arquitetura TerraSense](Images/Diagrama.png)
 
----
+A solução foi implantada em uma Máquina Virtual Linux Ubuntu 22.04 na Microsoft Azure.
 
-# Arquitetura do Projeto
+A infraestrutura é composta por:
 
-## Explicação das Camadas
-
-### Controller
-
-Responsável por disponibilizar os endpoints da aplicação, recebendo requisições HTTP e retornando respostas adequadas aos clientes da API.
-
-### Service
-
-Responsável pela implementação das regras de negócio, validações e processamento dos dados.
-
-### Repository
-
-Responsável pela comunicação com o banco de dados utilizando Spring Data JPA.
-
-### DTO
-
-Responsável pela transferência de dados entre cliente e servidor, evitando exposição direta das entidades.
-
-### Model
-
-Responsável pelo mapeamento das entidades do banco de dados através do JPA.
-
-### Exception
-
-Responsável pelo tratamento global e padronizado de exceções da aplicação.
-
-### Config
-
-Responsável pelas configurações gerais da aplicação, incluindo recursos do Spring HATEOAS.
+- Container da API Spring Boot (`api-rm566052`);
+- Container Oracle XE (`oracle-rm566052`);
+- Rede Docker dedicada (`terrasense-net`);
+- Volume nomeado Docker (`oracle_data`);
+- Imagem personalizada publicada no Docker Hub;
+- Provisionamento automatizado utilizando Azure CLI.
 
 ---
 
-# Estrutura do Projeto
+# Containerização
 
-```txt
-src/main/java/br/com/terrasense
-│
-├── config
-├── controller
-├── dto
-├── exception
-├── model
-├── repository
-└── service
-```
+## Container da Aplicação
 
----
+Características:
 
-# Banco de Dados
+- Dockerfile Multi-Stage;
+- Runtime Java customizado com JLink;
+- Usuário não privilegiado (`terrasenseuser`);
+- Diretório de trabalho `/app`;
+- Porta 8080 exposta;
+- Imagem publicada no Docker Hub.
 
-O projeto utiliza o Oracle Database como banco de dados relacional principal.
+Imagem utilizada:
 
-## Principais Entidades
-
-* Usuario
-* Propriedade
-* Plantacao
-* DadosNasa
-* DadosIotClima
-* Alerta
-
-## Relacionamentos
-
-* Um usuário pode possuir várias propriedades.
-* Uma propriedade pode possuir várias plantações.
-* Uma plantação pode possuir vários registros de dados da NASA.
-* Uma plantação pode possuir vários registros de dados climáticos provenientes de sensores IoT.
-* Uma plantação pode possuir vários alertas agrícolas.
-
-## Modelagem Avançada
-
-* Relacionamentos JPA (`@OneToMany` e `@ManyToOne`)
-* Objetos utilizando `@Embedded`
-* Classes reutilizáveis utilizando `@Embeddable`
-* Estrutura composta por múltiplas tabelas relacionadas
+docker.io/vitordalmagro/terrasense-api:jlink-v3
 
 ---
 
-# Como Executar o Projeto
+# Docker Compose
 
-## Clonar o Repositório
+O Docker Compose realiza a orquestração dos containers da aplicação.
 
-```bash
-git clone placeholder
-```
+Containers:
 
-## Acessar a Pasta do Projeto
+- api-rm566052 (Spring Boot API)
+- oracle-rm566052 (Oracle XE Database)
 
-```bash
-cd placeholder
-```
+Recursos implementados:
 
-## Executar a Aplicação
+- Volume nomeado para persistência (`oracle_data`);
+- Rede Docker dedicada (`terrasense-net`);
+- Variáveis de ambiente para conexão com banco;
+- Execução em segundo plano;
+- Comunicação entre containers pela mesma rede.
+---
 
-```bash
-./mvnw spring-boot:run
-```
+# Como Executar Localmente
 
-ou
+### 1: Clone do Repositório
 
-```bash
-mvn spring-boot:run
-```
+git clone https://github.com/TerraSense-GS/TerraSense_DevOps.git
+
+### 2: Acesse a pasta
+
+cd TerraSense_DevOps
+
+### 3: Execute os containers
+
+docker compose up -d
+
+### 3: Verifique os containers
+
+docker ps
+
+### 4: Acesse o Swagger
+
+http://localhost:8080/swagger-ui.html
 
 ---
 
-# Deploy
+# Como Executar na Azure
 
-## URL Base
+### 1: Clone do Repositório
 
-```txt
-https://terrasense-csjw.onrender.com
-```
+git clone https://github.com/TerraSense-GS/TerraSense_DevOps.git
 
----
+### 2: Acesse a pasta
 
-# Swagger
+cd TerraSense_DevOps
 
-## Swagger UI
+### 3: Login Azure
 
-```txt
-https://terrasense-csjw.onrender.com/swagger-ui.html
-```
+az login
 
----
+## 4: Executar provisionamento
 
-# Endpoints da API
+chmod +x azure/criar-infra.sh
 
-## Usuários
+./azure/criar-infra.sh
 
-| Método | Endpoint         |
-| ------ | ---------------- |
-| POST   | `/usuarios`      |
-| GET    | `/usuarios`      |
-| GET    | `/usuarios/{id}` |
-| PUT    | `/usuarios/{id}` |
-| DELETE | `/usuarios/{id}` |
+## 5: Acessar Swagger
 
----
-
-## Propriedades
-
-| Método | Endpoint                            |
-| ------ | ----------------------------------- |
-| POST   | `/propriedades`                     |
-| GET    | `/propriedades`                     |
-| GET    | `/propriedades/{id}`                |
-| GET    | `/propriedades/usuario/{idUsuario}` |
-| GET    | `/propriedades/tipo`                |
-| PUT    | `/propriedades/{id}`                |
-| DELETE | `/propriedades/{id}`                |
-
----
-
-## Plantações
-
-| Método | Endpoint                                  |
-| ------ | ----------------------------------------- |
-| POST   | `/plantacoes`                             |
-| GET    | `/plantacoes`                             |
-| GET    | `/plantacoes/{id}`                        |
-| GET    | `/plantacoes/propriedade/{idPropriedade}` |
-| GET    | `/plantacoes/status`                      |
-| GET    | `/plantacoes/tipo`                        |
-| PUT    | `/plantacoes/{id}`                        |
-| DELETE | `/plantacoes/{id}`                        |
-
----
-
-## Dados NASA
-
-| Método | Endpoint                              |
-| ------ | ------------------------------------- |
-| POST   | `/dados-nasa`                         |
-| GET    | `/dados-nasa`                         |
-| GET    | `/dados-nasa/{id}`                    |
-| GET    | `/dados-nasa/plantacao/{idPlantacao}` |
-| PUT    | `/dados-nasa/{id}`                    |
-| DELETE | `/dados-nasa/{id}`                    |
-
----
-
-## Dados IoT Clima
-
-| Método | Endpoint                                   |
-| ------ | ------------------------------------------ |
-| POST   | `/dados-iot-clima`                         |
-| GET    | `/dados-iot-clima`                         |
-| GET    | `/dados-iot-clima/{id}`                    |
-| GET    | `/dados-iot-clima/plantacao/{idPlantacao}` |
-| PUT    | `/dados-iot-clima/{id}`                    |
-| DELETE | `/dados-iot-clima/{id}`                    |
-
----
-
-## Alertas
-
-| Método | Endpoint                           |
-| ------ | ---------------------------------- |
-| POST   | `/alertas`                         |
-| GET    | `/alertas`                         |
-| GET    | `/alertas/{id}`                    |
-| GET    | `/alertas/plantacao/{idPlantacao}` |
-| GET    | `/alertas/status`                  |
-| GET    | `/alertas/nivel`                   |
-| PUT    | `/alertas/{id}`                    |
-| DELETE | `/alertas/{id}`                    |
-
----
-
-# Recursos Implementados
-
-* Spring HATEOAS
-* Paginação com `Pageable`
-* Swagger/OpenAPI
-* Bean Validation
-* Tratamento global de exceções
-* Oracle Database
-* Deploy no Render
-
----
-
-# Documentação da API
-
-A documentação completa da API pode ser acessada através do Swagger UI disponibilizado pela aplicação.
+http://IP_PUBLICO:8080/swagger-ui.html
 
 ---
 
 # Disciplina
 
-**Java Advanced — Global Solution**
+DevOps Tools & Cloud Computing — Global Solution
 
-**FIAP**
+FIAP

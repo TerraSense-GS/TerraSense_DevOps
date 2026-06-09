@@ -39,7 +39,7 @@ az vm open-port \
   --resource-group "$RG" \
   --name "$VM_NAME" \
   --port "$APP_PORT" \
-  --priority 1001
+  --priority 1001 \
   >/dev/null
 
 echo "Abrindo porta do Oracle $DB_PORT..."
@@ -121,6 +121,7 @@ fi
 
 
 echo "Finalizado com sucesso!"
+echo ""
 echo "API: http://$PUBLIC_IP:$APP_PORT"
 echo "Swagger: http://$PUBLIC_IP:$APP_PORT/swagger-ui.html"
 echo ""
