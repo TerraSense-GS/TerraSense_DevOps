@@ -95,8 +95,10 @@ docker compose up -d
 ```bash
 docker ps
 ```
+
 ### 5: Acesse o Swagger
-```bash
+
+```text
 http://localhost:8080/swagger-ui.html
 ```
 ---
@@ -122,16 +124,17 @@ chmod +x azure/criar-infra.sh
 ```bash
 ./azure/criar-infra.sh
 ```
+
 ## 5: Acessar Swagger
-```bash
+
+```text
 http://IP_PUBLICO:8080/swagger-ui.html
 ```
----
 
 # Links do Projeto
 
 - Docker Hub: https://hub.docker.com/repository/docker/vitordalmagro/terrasense-api
-- Vídeo Demonstrativo: [LINK_DO_YOUTUBE](https://youtu.be/MQc8wK1yJRo)
+- Vídeo Demonstrativo: https://youtu.be/MQc8wK1yJRo
 ---
 # Disciplina
 
