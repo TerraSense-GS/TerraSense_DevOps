@@ -91,11 +91,11 @@ cd TerraSense_DevOps
 ```bash
 docker compose up -d
 ```
-### 3: Verifique os containers
+### 4: Verifique os containers
 ```bash
 docker ps
 ```
-### 4: Acesse o Swagger
+### 5: Acesse o Swagger
 ```bash
 http://localhost:8080/swagger-ui.html
 ```
@@ -128,6 +128,11 @@ http://IP_PUBLICO:8080/swagger-ui.html
 ```
 ---
 
+# Links do Projeto
+
+- Docker Hub: https://hub.docker.com/repository/docker/vitordalmagro/terrasense-api
+- Vídeo Demonstrativo: [LINK_DO_YOUTUBE](https://youtu.be/MQc8wK1yJRo)
+---
 # Disciplina
 
 DevOps Tools & Cloud Computing — Global Solution
