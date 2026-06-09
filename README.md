@@ -80,51 +80,52 @@ Recursos implementados:
 # Como Executar Localmente
 
 ### 1: Clone do Repositório
-
+```bash
 git clone https://github.com/TerraSense-GS/TerraSense_DevOps.git
-
+```
 ### 2: Acesse a pasta
-
+```bash
 cd TerraSense_DevOps
-
+```
 ### 3: Execute os containers
-
+```bash
 docker compose up -d
-
+```
 ### 3: Verifique os containers
-
+```bash
 docker ps
-
+```
 ### 4: Acesse o Swagger
-
+```bash
 http://localhost:8080/swagger-ui.html
-
+```
 ---
 
 # Como Executar na Azure
 
 ### 1: Clone do Repositório
-
+```bash
 git clone https://github.com/TerraSense-GS/TerraSense_DevOps.git
-
+```
 ### 2: Acesse a pasta
-
+```bash
 cd TerraSense_DevOps
-
+```
 ### 3: Login Azure
-
+```bash
 az login
-
+```
 ## 4: Executar provisionamento
-
+```bash
 chmod +x azure/criar-infra.sh
-
+```
+```bash
 ./azure/criar-infra.sh
-
+```
 ## 5: Acessar Swagger
-
+```bash
 http://IP_PUBLICO:8080/swagger-ui.html
-
+```
 ---
 
 # Disciplina
